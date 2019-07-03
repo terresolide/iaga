@@ -1,8 +1,16 @@
 {
   "name": "terresolide/iaga-php",
+  "version": "0.1.0",
   "description": "Tools to manipulate iaga",
-  "type": "project",
+  "type": "library",
+  "keywords": ["geomagnetic index", "geomagnetism", "geomagnetic station"],
   "license": "GNU",
+  "authors": [{
+      "name": "Elisabeth Pointal",
+      "email": "elisabeth.pointal@gmail.com",
+      "homepage": "http://elisabeth.pointal.org",
+      "role": "Developer"
+  }],
   "config": {
       "vendor-dir": "vendor",
       "bin-dir": "bin/vendor",
@@ -11,11 +19,18 @@
       "preferred-install": "source"
   },
   "require": {
+      "php": ">=5.3.0"
   },
   "require-dev": {
    },
   "autoload": {
+	  "psr-4": {
+		  "Model\\": "Model/"
+	  }
   },
   "autoload-dev": {
+	  "psr-4": {
+		  "Model\\": "Model/"
+	  }
   }
 }
