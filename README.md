@@ -4,4 +4,4 @@
 
 &#x202F;
 # Class Iaga 
-Iaga PHP class to read and to handle iaga file (geomagnetic data format)
+PHP class to read and to handle iaga file (geomagnetic data format)
