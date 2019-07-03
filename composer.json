@@ -1,0 +1,21 @@
+{
+  "name": "terresolide/iaga-php",
+  "description": "Tools to manipulate iaga",
+  "type": "project",
+  "license": "GNU",
+  "config": {
+      "vendor-dir": "vendor",
+      "bin-dir": "bin/vendor",
+      "component-dir": "web/component/vendor",
+      "optimize-autoloader": true,
+      "preferred-install": "source"
+  },
+  "require": {
+  },
+  "require-dev": {
+   },
+  "autoload": {
+  },
+  "autoload-dev": {
+  }
+}
