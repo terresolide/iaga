@@ -14,9 +14,21 @@ PHP class to read and to handle iaga file (geomagnetic data format)
 ```php
   require_once 'Iaga.php'
 
+  // create Iaga
   $iaga = new Iaga();
+  // load file
   $iaga->loadFile('data/iaga_file.dat');
   
+  // add metadata link to download
+  $iaga->setMetadata(
+        'download', 
+        array(
+                'name' => 'exemple_indice_aa.dat',
+                'link' => 'https://url_to_download'
+                )
+        );
+
+  // output
   header('Content-Type: application/json');
   echo $iaga->toJson();
 ```

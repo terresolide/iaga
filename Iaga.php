@@ -122,10 +122,10 @@ class Iaga {
      * @return string
      */
     public function toJson() {
-    	$data = array();
-    	foreach($this->data as  $values) {
-    		$data[] = array_combine($this->fields, $values);
-    	}
+        $data = array();
+        foreach($this->data as  $values) {
+            $data[] = array_combine($this->fields, $values);
+        }
         $rep = array(
                 "metadata" => $this->metadata,
                 "data"     => $data
@@ -240,10 +240,10 @@ class Iaga {
      * @param string $line
      */
     private function extractData($line) {
-    	if (strlen($line) === 0) {
-    		// empty line
-    		return;
-    	}
+        if (strlen($line) === 0) {
+            // empty line
+            return;
+        }
         $data = preg_split('/\s+/', $line);
         if ($this->isDatetime) {
             $date = $data[0].'T'.$data[1].'Z';
@@ -252,8 +252,8 @@ class Iaga {
         }
         $end = end($data);
         while($end === '|' || $end === '') {
-        	array_pop($data);
-        	$end = end($data);
+            array_pop($data);
+            $end = end($data);
         }
         array_push($this->listDates, $date);
         array_push($this->data, $data);
