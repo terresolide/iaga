@@ -62,10 +62,19 @@ class Iaga {
     
     /**
      * Fill metadata and data from Iaga using ftp 
-     * @todo
+     * @param string $ftpUrl ftp url with user and password
      */
-    public function loadFromFtp($ftp) {
-        
+    public function loadFtp($ftpUrl) {
+        $url = $ftpUrl;
+        $ctx = stream_context_create(array('ftp' => array('resume_pos' => 0)));
+        $flx = fopen($url, 'r', false, $ctx);
+        if (! $flx === false) {
+            $this->read($flx);
+        } else {
+            $this->error = 'CAN NOT OPEN THE FILE ' . $filename;
+            throw new Exception('CAN NOT OPEN THE FILE ' . $filename);
+        }
+        fclose($flx);
     }
     
     /**
@@ -200,6 +209,9 @@ class Iaga {
         } else {
             $value = substr($line, 24);
             $value = $string = preg_replace('/[\s\|]+/', '', $value);
+            if (preg_match('/,{1}/', $value)) {
+                $value = preg_split('/,{1}/', $value);
+            }
             $this->metadata->{$name} = $value;
             if ($name === 'iagaCode') {
                 $this->identifier = strtolower($value);
