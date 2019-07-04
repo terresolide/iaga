@@ -12,7 +12,7 @@ PHP class to read and to handle iaga file (geomagnetic data format)
 ## An example use
 
 ```php
-<?php
+  require_once 'Iaga.php'
 
   $iaga = new Iaga();
   $iaga->loadFile('data/iaga_file.dat');
