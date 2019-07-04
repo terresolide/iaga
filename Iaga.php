@@ -49,7 +49,7 @@ class Iaga {
         if (! $flx === false) {
             $this->read($flx);
         } else {
-        	$this->error = 'CAN NOT OPEN THE FILE ' . $filename;
+            $this->error = 'CAN NOT OPEN THE FILE ' . $filename;
             throw new Exception('CAN NOT OPEN THE FILE ' . $filename);
         }
         fclose($flx);
@@ -101,7 +101,7 @@ class Iaga {
      * @param string $value of metadata
      */
     public function setMetadata($name, $value) {
-    	$this->metadata[$name] = $value;
+        $this->metadata[$name] = $value;
     }
     
     /**
@@ -148,9 +148,9 @@ class Iaga {
      * @param resource $resource
      */
     private function read($resource) {
-    	// initialize description to empty
-    	$this->metadata['description'] = '';
-    	
+        // initialize description to empty
+        $this->metadata['description'] = '';
+        
         //read line by line the resource
         while (!feof($resource)) {
             $line = fgets($resource);
@@ -175,22 +175,22 @@ class Iaga {
      * @param string $line
      */
     private function extractMetadata($line) {
-    	$name = preg_replace('/\s+/','', substr( $line, 1, 23));
-    	if (strtoupper($name) != 'IAGACODE') {
-    		$name[0] = strtolower($name[0]);
-    	} else {
-    		$name = 'iagaCode';
-    	}
-    	if ($name[0] === '#') {
-    		$this->addLineDescription(substr($line, 2));
-    	} else {
-    		$value = substr($line, 24);
-    		$value = $string = preg_replace('/[\s\|]+/', '', $value);
-    		$this->metadata[$name] = $value;
-    		if ($name === 'iagaCode') {
-    			$this->identifier = strtolower($value);
-    		}
-    	}
+        $name = preg_replace('/\s+/','', substr( $line, 1, 23));
+        if (strtoupper($name) != 'IAGACODE') {
+            $name[0] = strtolower($name[0]);
+        } else {
+            $name = 'iagaCode';
+        }
+        if ($name[0] === '#') {
+            $this->addLineDescription(substr($line, 2));
+        } else {
+            $value = substr($line, 24);
+            $value = $string = preg_replace('/[\s\|]+/', '', $value);
+            $this->metadata[$name] = $value;
+            if ($name === 'iagaCode') {
+                $this->identifier = strtolower($value);
+            }
+        }
     }
     
     /**
@@ -198,7 +198,7 @@ class Iaga {
      * @param string $line
      */
     private function addLineDescription($line) {
-    	$this->metadata['description'] .= preg_replace('/\|+/', '', $line);
+        $this->metadata['description'] .= preg_replace('/\|+/', '', $line);
     }
     
     /**
@@ -206,19 +206,19 @@ class Iaga {
      * @param string $line
      */
     private function extractFields($line) {
-    	$fields = preg_split('/\s+/', $line);
-    	// remove last elements in array if it's space or |
-    	$end = end($fields);
-    	while($end === '|' || $end === '') {
-    		array_pop($fields);
-    		$end = end($fields);
-    	}
-    	if ($fields[0] === 'DATE' && $fields[1] === 'TIME') {
-    		array_splice($fields, 1, 1 );
-    		$fields[0] = 'DATETIME';
-    		$this->isDatetime = true;
-    	}
-    	$this->fields = $fields;
+        $fields = preg_split('/\s+/', $line);
+        // remove last elements in array if it's space or |
+        $end = end($fields);
+        while($end === '|' || $end === '') {
+            array_pop($fields);
+            $end = end($fields);
+        }
+        if ($fields[0] === 'DATE' && $fields[1] === 'TIME') {
+            array_splice($fields, 1, 1 );
+            $fields[0] = 'DATETIME';
+            $this->isDatetime = true;
+        }
+        $this->fields = $fields;
     }
     
     /**
@@ -226,7 +226,7 @@ class Iaga {
      * @param string $line
      */
     private function extractData($line) {
-    	
+        
     }
     
 }
