@@ -13,10 +13,14 @@ class Iaga {
     private $identifier = null;
     
     /**
-     * @var array associative containing timeResolution, title, bbox, temporalExtent, processingLevel ...
+     * @var Object contains timeResolution, dataType ...
      */
-    private $metadata = array();
+    private $metadata = null;
     
+    /**
+     * @var array
+     */
+    private  $listDates = array();
     /**
      * @var array 
      */
@@ -38,6 +42,7 @@ class Iaga {
     private $isDatetime = false;
     
     public function __construct() {
+        $this->metadata = new stdClass();
     }
     
     /**
@@ -101,7 +106,7 @@ class Iaga {
      * @param string $value of metadata
      */
     public function setMetadata($name, $value) {
-        $this->metadata[$name] = $value;
+        $this->metadata->{$name} = $value;
     }
     
     /**
@@ -117,9 +122,13 @@ class Iaga {
      * @return string
      */
     public function toJson() {
+    	$data = array();
+    	foreach($this->data as  $values) {
+    		$data[] = array_combine($this->fields, $values);
+    	}
         $rep = array(
                 "metadata" => $this->metadata,
-                "data"     => $this->data
+                "data"     => $data
         );
         return json_encode($rep, JSON_NUMERIC_CHECK);
     }
@@ -149,7 +158,9 @@ class Iaga {
      */
     private function read($resource) {
         // initialize description to empty
-        $this->metadata['description'] = '';
+        $this->metadata->description = '';
+        $this->metadata->temporalExtent = new stdClass();
+        
         
         //read line by line the resource
         while (!feof($resource)) {
@@ -167,7 +178,10 @@ class Iaga {
                 break;
             }
         }
-        var_dump($this->metadata);
+        // order data by date (usefull???)
+        array_multisort($this->listDates, SORT_ASC, SORT_STRING, $this->data);
+        $this->metadata->temporalExtent->begin = $this->listDates[0];
+        $this->metadata->temporalExtent->end = end($this->listDates);
     }
     
     /**
@@ -186,7 +200,7 @@ class Iaga {
         } else {
             $value = substr($line, 24);
             $value = $string = preg_replace('/[\s\|]+/', '', $value);
-            $this->metadata[$name] = $value;
+            $this->metadata->{$name} = $value;
             if ($name === 'iagaCode') {
                 $this->identifier = strtolower($value);
             }
@@ -198,7 +212,7 @@ class Iaga {
      * @param string $line
      */
     private function addLineDescription($line) {
-        $this->metadata['description'] .= preg_replace('/\|+/', '', $line);
+        $this->metadata->description .= preg_replace('/\|+/', '', $line);
     }
     
     /**
@@ -215,7 +229,7 @@ class Iaga {
         }
         if ($fields[0] === 'DATE' && $fields[1] === 'TIME') {
             array_splice($fields, 1, 1 );
-            $fields[0] = 'DATETIME';
+            $fields[0] = 'time';
             $this->isDatetime = true;
         }
         $this->fields = $fields;
@@ -226,6 +240,23 @@ class Iaga {
      * @param string $line
      */
     private function extractData($line) {
+    	if (strlen($line) === 0) {
+    		// empty line
+    		return;
+    	}
+        $data = preg_split('/\s+/', $line);
+        if ($this->isDatetime) {
+            $date = $data[0].'T'.$data[1].'Z';
+            array_splice($data, 1, 1);
+            $data[0] = $date;
+        }
+        $end = end($data);
+        while($end === '|' || $end === '') {
+        	array_pop($data);
+        	$end = end($data);
+        }
+        array_push($this->listDates, $date);
+        array_push($this->data, $data);
         
     }
     
