@@ -19,18 +19,16 @@
       "preferred-install": "source"
   },
   "require": {
-      "php": ">=5.3.0"
+      "php": ">=5.6.0"
   },
   "require-dev": {
    },
   "autoload": {
 	  "psr-4": {
-		  "Model\\": "Model/"
 	  }
   },
   "autoload-dev": {
 	  "psr-4": {
-		  "Model\\": "Model/"
 	  }
   }
 }

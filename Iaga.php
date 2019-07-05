@@ -8,7 +8,6 @@
 
 namespace iaga;
 
-include_once 'Config.php';
 
 class Iaga {
     /** 
@@ -113,16 +112,17 @@ class Iaga {
      * @return string
      */
     public function toJson() {
-        $data = array();
-        foreach($this->data as  $values) {
-            $data[] = array_combine($this->fields, $values);
-        }
-        $rep = array(
-                "metadata" => $this->metadata,
-                "data"     => $data
-        );
         if (!is_null($this->error)) {
             $rep = array("error" => $this->error);
+        } else {
+            $data = array();
+            foreach($this->data as  $values) {
+                $data[] = array_combine($this->fields, $values);
+            }
+            $rep = array(
+                    "metadata" => $this->metadata,
+                    "data"     => $data
+            );
         }
         return json_encode($rep, JSON_NUMERIC_CHECK);
     }
@@ -140,8 +140,12 @@ class Iaga {
      * @return string
      */
     public function toJsonGraph() {
-        $rep = [];
-        // @todo
+        if (!is_null($this->error)) {
+            $rep = array("error" => $this->error);
+        } else {
+            include_once 'Config.php';
+            // @todo
+        }
         return json_encode($rep, JSON_NUMERIC_CHECK);
     }
     
@@ -150,9 +154,9 @@ class Iaga {
      * @param string $filename path or url to Iaga file
      */
     private function load ($filepath) {
-    	$flx = fopen( $filepath, "r");
-    	$this->read($flx, $filepath);
-    	fclose($flx);
+        $flx = fopen( $filepath, "r");
+        $this->read($flx, $filepath);
+        fclose($flx);
     }
     
     /**
@@ -196,7 +200,7 @@ class Iaga {
      * @param string $filepath path, url or ftpurl
      */
     private function initMetadata($filepath) {
-    	$matches = array();
+        $matches = array();
         preg_match('/[^\/]*$/', $filepath, $matches);
         $this->filename = $matches[0];
         
