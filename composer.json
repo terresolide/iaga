@@ -1,6 +1,6 @@
 {
   "name": "terresolide/iaga",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Tools to manipulate iaga",
   "type": "library",
   "keywords": ["geomagnetic index", "geomagnetism", "geomagnetic station"],
