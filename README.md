@@ -20,6 +20,9 @@ In your `composer.json`:
 	        "url": "https://github.com/terresolide/iaga.git"
 	    }
 	],
+ "require": {
+    "terresolide/iaga": "^0.3.0"
+  },
 ```
 
 ### Without composer
