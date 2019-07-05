@@ -8,8 +8,25 @@ PHP class to read and to handle iaga file (geomagnetic data format)
 
 
 ## Install
+### With composer
+In your `composer.json`:
+ * Add repository: `https://github.com/terresolide/iaga.git
+ * Add require to: `terresolide/iaga`
 
-## An example use
+```json
+     "repositories": [
+	    {
+	        "type": "git",
+	        "url": "https://github.com/terresolide/iaga.git"
+	    }
+	],
+```
+
+### Without composer
+
+
+## An example use 
+### without composer autoload
 
 ```php
   require_once 'Iaga.php'
