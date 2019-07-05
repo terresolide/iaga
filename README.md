@@ -14,15 +14,15 @@ In your `composer.json`:
  * Add require to: `terresolide/iaga`
 
 ```json
-     "repositories": [
-	    {
-	        "type": "git",
-	        "url": "https://github.com/terresolide/iaga.git"
-	    }
-	],
- "require": {
-    "terresolide/iaga": "^0.3.0"
-  },
+   "repositories": [
+	{
+	    "type": "git",
+	    "url": "https://github.com/terresolide/iaga.git"
+	}
+   ],
+   "require": {
+        "terresolide/iaga": "^0.3.0"
+   },
 ```
 
 ### Without composer
