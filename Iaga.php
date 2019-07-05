@@ -1,16 +1,25 @@
 <?php
-
 /**
- * IAGA
+ * IAGA a class to load and to process iaga file
+ * 
  * @license GNU
  * @author epointal
  **/
+
+namespace iaga;
+
+include_once 'Config.php';
 
 class Iaga {
     /** 
      * @var string Geomagnetic code (lowercase) of indice or station like AA or KOU
      */
     private $identifier = null;
+    
+    /**
+     * @var string filename
+     */
+    private $filename = null;
     
     /**
      * @var Object contains timeResolution, dataType ...
@@ -41,45 +50,18 @@ class Iaga {
      */
     private $isDatetime = false;
     
-    public function __construct() {
-        $this->metadata = new stdClass();
-    }
-    
     /**
-     * Fill metadata and data from Iaga path or url
-     * @param string $filename path or url to Iaga file
+     * build Iaga from a filepath, http url, or ftp url
+     * @param string $filepath
      */
-    public function loadFile ($filename) {
-        $flx = fopen( $filename, "r");
-        if (! $flx === false) {
-            $this->read($flx);
-        } else {
-            $this->error = 'CAN NOT OPEN THE FILE ' . $filename;
-            throw new Exception('CAN NOT OPEN THE FILE ' . $filename);
-        }
-        fclose($flx);
+    public function __construct($filepath) {
+        $this->load($filepath);
     }
     
-    /**
-     * Fill metadata and data from Iaga using ftp 
-     * @param string $ftpUrl ftp url with user and password
-     */
-    public function loadFtp($ftpUrl) {
-        $url = $ftpUrl;
-        $ctx = stream_context_create(array('ftp' => array('resume_pos' => 0)));
-        $flx = fopen($url, 'r', false, $ctx);
-        if (! $flx === false) {
-            $this->read($flx);
-        } else {
-            $this->error = 'CAN NOT OPEN THE FILE ' . $filename;
-            throw new Exception('CAN NOT OPEN THE FILE ' . $filename);
-        }
-        fclose($flx);
-    }
-    
+
     /**
      * Concat data from another file
-     * @param \Iaga $iaga 
+     * @param Iaga $iaga 
      * @param boolean $force merge data even if they have different processingLevel
      */
     public function concat($iaga, $force=false) {
@@ -139,6 +121,9 @@ class Iaga {
                 "metadata" => $this->metadata,
                 "data"     => $data
         );
+        if (!is_null($this->error)) {
+            $rep = array("error" => $this->error);
+        }
         return json_encode($rep, JSON_NUMERIC_CHECK);
     }
     
@@ -161,15 +146,28 @@ class Iaga {
     }
     
     /**
+     * Fill metadata and data from Iaga path or url or ftp url
+     * @param string $filename path or url to Iaga file
+     */
+    private function load ($filepath) {
+    	$flx = fopen( $filepath, "r");
+    	$this->read($flx, $filepath);
+    	fclose($flx);
+    }
+    
+    /**
      * Extract informations and data from the resource
      * to fill the metadata and data
      * @param resource $resource
+     * @param string $url the path, url, or ftp path of the file
      */
-    private function read($resource) {
-        // initialize description to empty
-        $this->metadata->description = '';
-        $this->metadata->temporalExtent = new stdClass();
-        
+    private function read($resource, $url) {
+
+        if ($resource === false) {
+            $this->error = 'CAN NOT OPEN THE FILE ' . $url;
+            return;
+        }
+        $this->initMetadata($url);
         
         //read line by line the resource
         while (!feof($resource)) {
@@ -188,9 +186,26 @@ class Iaga {
             }
         }
         // order data by date (usefull???)
-        array_multisort($this->listDates, SORT_ASC, SORT_STRING, $this->data);
+        // array_multisort($this->listDates, SORT_ASC, SORT_STRING, $this->data);
         $this->metadata->temporalExtent->begin = $this->listDates[0];
         $this->metadata->temporalExtent->end = end($this->listDates);
+    }
+    
+    /**
+     * Initialize metadata, in particulary with the filename
+     * @param string $filepath path, url or ftpurl
+     */
+    private function initMetadata($filepath) {
+    	$matches = array();
+        preg_match('/[^\/]*$/', $filepath, $matches);
+        $this->filename = $matches[0];
+        
+        $this->metadata = new \stdClass();
+        $this->metadata = new \stdClass();
+        // initialize description to empty
+        $this->metadata->description = '';
+        $this->metadata->temporalExtent = new \stdClass();
+        $this->metadata->title = $this->filename;
     }
     
     /**
@@ -208,7 +223,7 @@ class Iaga {
             $this->addLineDescription(substr($line, 2));
         } else {
             $value = substr($line, 24);
-            $value = $string = preg_replace('/[\s\|]+/', '', $value);
+            $value = preg_replace('/[\s\|]+/', '', $value);
             if (preg_match('/,{1}/', $value)) {
                 $value = preg_split('/,{1}/', $value);
             }
@@ -269,7 +284,5 @@ class Iaga {
         }
         array_push($this->listDates, $date);
         array_push($this->data, $data);
-        
     }
-    
 }
