@@ -11,13 +11,6 @@
       "homepage": "http://elisabeth.pointal.org",
       "role": "Developer"
   }],
-  "config": {
-      "vendor-dir": "vendor",
-      "bin-dir": "bin/vendor",
-      "component-dir": "web/component/vendor",
-      "optimize-autoloader": true,
-      "preferred-install": "source"
-  },
   "require": {
       "php": ">=5.6.0"
   },
@@ -25,10 +18,12 @@
    },
   "autoload": {
 	  "psr-4": {
+		  "iaga\\": "src/"
 	  }
   },
   "autoload-dev": {
 	  "psr-4": {
+		  "iaga\\": "src/"
 	  }
   }
 }
