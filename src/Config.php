@@ -10,7 +10,11 @@ class Config {
               "name"   => "aa", 
               "unit"   => "nT", 
               "color"  => "#336699",
-              "url"    => "http =>//isgi.unistra.fr/indices_aa.php"
+              "url"    => "http =>//isgi.unistra.fr/indices_aa.php",
+              "series" => array( 
+                  "aa" => array(),
+                  "kp" => array()
+              )
          ),
         "am" => array(
               "name"   => "am", 
@@ -73,4 +77,20 @@ class Config {
               "url"    => "http =>//isgi.unistra.fr/indices_asigma.php"
         )
   );
+    
+    public static function getStyles($code) {
+    	
+    }
+    public static function kp2Value ($kp) {
+        $num = floatval($kp[0]);
+        switch($kp[1]) {
+            case '+':
+                $num += 0.333;
+                break;
+            case '-':
+                $num += 0.333;
+                break;
+            default:
+        }
+    }
 }

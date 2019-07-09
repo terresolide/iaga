@@ -5,49 +5,49 @@
  * @license GNU
  * @author epointal
  **/
-
 namespace iaga;
 
+include_once 'Config.php';
 
 class Iaga {
     /** 
      * @var string Geomagnetic code (lowercase) of indice or station like AA or KOU
      */
-    private $identifier = null;
+    protected $code = null;
     
     /**
      * @var string filename
      */
-    private $filename = null;
+    protected $filename = null;
     
     /**
      * @var Object contains timeResolution, dataType ...
      */
-    private $metadata = null;
+    protected $metadata = null;
     
     /**
      * @var array
      */
-    private  $listDates = array();
+    protected  $listDates = array();
     /**
      * @var array 
      */
-    private $data = array();
+    protected $data = array();
     
     /**
      * @var array
      */
-    private $fields = array();
+    protected $fields = array();
     
     /**
      * @var String
      */
-    private $error = null;
+    protected $error = null;
     
     /**
      * @var Boolean to know if there are two column for the date
      */
-    private $isDatetime = false;
+    protected $isDatetime = false;
     
     /**
      * build Iaga from a filepath, http url, or ftp url
@@ -75,11 +75,11 @@ class Iaga {
     }
     
     /**
-     * get identifier
+     * get code
      * @return string
      */
-    public function getIdentifier() {
-        return $this->identifier;
+    public function getCode() {
+        return $this->code;
     }
     
     /**
@@ -133,20 +133,6 @@ class Iaga {
      */
     public function toXml() {
         // @todo
-    }
-    
-    /**
-     * return a json string ready to build graph with style
-     * @return string
-     */
-    public function toJsonGraph() {
-        if (!is_null($this->error)) {
-            $rep = array("error" => $this->error);
-        } else {
-            include_once 'Config.php';
-            // @todo
-        }
-        return json_encode($rep, JSON_NUMERIC_CHECK);
     }
     
     /**
@@ -233,7 +219,7 @@ class Iaga {
             }
             $this->metadata->{$name} = $value;
             if ($name === 'iagaCode') {
-                $this->identifier = strtolower($value);
+                $this->code = strtolower($value);
             }
         }
     }
@@ -289,4 +275,6 @@ class Iaga {
         array_push($this->listDates, $date);
         array_push($this->data, $data);
     }
+   
+  
 }
