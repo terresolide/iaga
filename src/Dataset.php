@@ -1,17 +1,16 @@
 <?php
 /**
- * IAGA a class to load and to process iaga file
+ * Dataset a class to load and to process iaga file 
  * 
  * @license GNU
  * @author epointal
  **/
-namespace iaga;
+namespace Iaga;
 
-include_once 'Config.php';
 
-class Iaga {
+class Dataset {
     /** 
-     * @var string Geomagnetic code (lowercase) of indice or station like AA or KOU
+     * @var string Geomagnetic code of indice or station like aa or KOU
      */
     protected $code = null;
     
@@ -219,7 +218,7 @@ class Iaga {
             }
             $this->metadata->{$name} = $value;
             if ($name === 'iagaCode') {
-                $this->code = strtolower($value);
+                $this->code = $value;
             }
         }
     }

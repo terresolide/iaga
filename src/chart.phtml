@@ -1,4 +1,4 @@
-<?php ?>
+<?php var_dump($options);?>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
     <?php if (!isset($error)):?>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script>
-        Highcharts.chart('iagaChart', <?=json_encode($options)?>);
+        Highcharts.chart('iagaChart', <?=json_encode($options, JSON_NUMERIC_CHECK)?>);
     </script>
     <?php endif;?>
 </body>    

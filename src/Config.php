@@ -1,7 +1,5 @@
 <?php
-
-
-namespace iaga;
+namespace Iaga;
 
 class Config {
     public static $styles = array(
