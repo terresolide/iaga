@@ -4,47 +4,8 @@ namespace Iaga;
 // case: don't use vendor autoloader
 include_once 'Dataset.php';
 include_once 'Config.php';
+include_once 'Chart/AaParameters.php';
 
-/**
- * lightens or darkens a color (darkens when percent < 0)
- * @param string $hex color in hexadecimal where length = 7 (not accepted color like #aaa)
- * @param float $percent number between 0 and 1
- * @return string an hexadecimal color
- */
-function shadeColor($hex, $percent) {
-    $rgb = str_split(trim($hex, '# '), 2);
-    
-    foreach ($rgb as &$hex) {
-        $color = hexdec($hex);
-        $adjustableLimit = $percent < 0 ? $color : 255 - $color;
-        $adjustAmount = ceil($adjustableLimit * $percent);
-        $hex = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
-    }
-    return '#'.implode($rgb);
-}
-
-/**
- * Convert kp value like 0+, 1- in float value
- * @param string $kpvalue
- * @return number
- */
-function kp2value($kpvalue) {
-        if(gettype($kpvalue) != 'string'){
-            return 0;
-        }
-        $num = floatval( $kpvalue[0]);
-        
-        switch($kpvalue[1]){
-            case "+":
-                $num += 0.333;
-                break;
-            case "-":
-                $num -= 0.333;
-                break;
-        }
-        
-        return $num;
-}
 
 Class Chart extends Dataset{
     /**
@@ -52,19 +13,19 @@ Class Chart extends Dataset{
      * the kp is evaluated in constructor
      * @var string like 'Kpa' or other, null if have not kp
      */
-    private $kp = null;
+ //   private $kp = null;
     
     /**
      * Array of colors according to code
      * @var Array
      */
-    private $colors = array();
+ //   private $colors = array();
     
     /**
-     * Array of data, ready for Highchart
+     * Array of parameters, ready for Highchart
      * @param array 
      */
-    private $series = array();
+    private $parameters = null;
     
     public function __construct($iaga) {
         switch(gettype($iaga)) {
@@ -77,8 +38,8 @@ Class Chart extends Dataset{
                 }
                 break;
         }
-        $this->getKpName();
-        $this->initColors();
+       // $this->getKpName();
+      //  $this->initColors();
        // $this->initSeries();
     }
     
@@ -87,6 +48,10 @@ Class Chart extends Dataset{
      * @return array
      */
     public function toChartArray() {
+    	if(count($this->series) === 0) {
+    		$this->initSeries();
+    	}
+    	var_dump($this->series);
         if (!is_null($this->error)) {
             $rep = array("error" => $this->error);
         } else {
@@ -129,16 +94,19 @@ Class Chart extends Dataset{
      * Compute the appropriate colors according to indice or station
      */
     private function initColors() {
-        $color =  Config::$styles[$this->code]['color'];
+        $color =  Config::$styles[\strtolower($this->code)]['color'];
         $this->setColor($color);
     }
 
     /**
-     * Prepare data and optins for Highchart
+     * Prepare data and options for Highchart
      * @return array all the options to build highchart chart
      */
     private function getOptions() {
-        $this->initSeries();
+    	var_dump($this->code);
+    	$parameters = new Chart\AaParameters($this->code, $this->data, $this->fields);
+       // $parameters->initSeries();
+    	var_dump($parameters->getYAxis());
         return array(
             'chart' => array(
                 'height'             => 300, 
@@ -167,12 +135,17 @@ Class Chart extends Dataset{
                 ),
                 'crosshair'        => true
             ),
-            'plotOptions' => $this->getPlotOptions(),
-            'yAxis'    => $this->getYAxis(),
-            'tooltip' => $this->getTooltip(),
-            'series'  => $this->getSeries()    
+            'plotOptions' => $parameters->getPlotOptions(),
+            'yAxis'    => $parameters->getYAxis(),
+            'tooltip' => $parameters->getTooltip(),
+            'series'  => $parameters->getSeries()    
         );
     }
+    
+    /**
+     * prepare the plot Options for highchart according the indice
+     * @return array 
+     */
     private function getPlotOptions () {
         $plotOptions = array( 'series' => array(
             'stacking' => "normal",
@@ -196,6 +169,23 @@ Class Chart extends Dataset{
         	case 'Kp':
         		$tooltip['formatter'] = 'formatterDefault';
         		break;
+        	case 'Dst':
+        	case 'PC':
+        		break;
+        	case 'SC':
+        	case 'SFE':
+        		break;
+        	case 'CK-days':
+        		break;
+        	case 'Q-days':
+        		break;
+        	case 'asigma':
+        	case 'AE':
+        		break;
+        		// station
+        	default:
+        		break;
+        		
         }
         
         return $tooltip;
@@ -203,12 +193,17 @@ Class Chart extends Dataset{
     private function getYAxis() {
         $yAxis = array();
         $infos = Config::$styles[$this->code];
+        // trouble with Kp indice whose denominations principe is different from indices aa and am: 
+        // - the name of geomagnetic index is Kp 
+        // - the linear values are ap
+        
         
         switch($this->code) {
             case 'aa':
             case 'am':
             case 'Kp':
             case 'Dst':
+            	$code = $this->code === 'Kp' ? 'ap' : $this->code;
                 if (!is_null($this->kp)) {
                     $html = '<span style="color:'. $this->colors[2] .';font-weight:600;">';
                     $html .= $this->kp .'</span>';
@@ -217,16 +212,13 @@ Class Chart extends Dataset{
                             'useHTML' => true,
                             'text' => $html
                         ),
-                       // 'minorTickInterval' => 2,
-                      //  'tickLength' => 10,
-                    	//'endOnTick' => true,
                     	'tickAmount' => 4,
                         'max' => 9,
                         'opposite' => true 
                     ));
                 }
                 $html = '<span style="color:'. $this->colors[1] .'">';
-                $html .= '<b>'. $infos['name']. '</b></span> (' . $infos['unit']. ')';
+                $html .= '<b>'. $code. '</b></span> (' . $infos['unit']. ')';
                 array_unshift($yAxis, array(
                     'title' => array(
                         'margin' => 20,
@@ -287,10 +279,17 @@ Class Chart extends Dataset{
         }
         
     }
+    /**
+     * Create one (or two) temporal series from data array
+     * Used by Kp, aa, am and Dst indices
+     * For the 'kp' indices add column kp
+     */
     private function initSeriesDefaultIndice () {
-         $data = array();
-         $datakp = array();
+    	 $code = ($this->code === 'Kp') ? 'ap' : $this->code;
+         $data = array(); // line
+         $datakp = array(); // column
          if (!is_null($this->kp)){
+         	//search the index in each $this->data line of 'kp' (kpa, kpm or kp)
              $searchkp = array_filter($this->fields, function ($value) {
                  if (preg_match('/^kp[am]{0,1}/i', $value)) {
                      return true;
@@ -298,13 +297,20 @@ Class Chart extends Dataset{
                      return false;
                  }
              });
+             // the index of kp value in each line of $this->data
              $indexkp = array_keys($searchkp)[0];
          }
-         $index = array_search($this->code, $this->fields, true);
+         // search the index of indice in each line of $this->data
+         $index = array_search($code, $this->fields, true);
+         var_dump($code);
          $i = 0;
          foreach($this->data as $values) {
              $date = new \DateTime( $values[0]);
              $microtime =  1000 * $date->format('U');
+             if (!is_null($this->kp)) {
+             	// add 1h30 (why?)
+             	$microtime += 5400000;
+             }
              // values of aa, am or kp  are in column $index
              if (!empty($values[$index]) && $values[$index] != '9999' && $values[$index] != '999.00') {
                  $point = array($microtime, $values[$index]);
@@ -350,13 +356,5 @@ Class Chart extends Dataset{
         }
         return $series;
     }
-    private function getKpName() {
-        foreach($this->fields as $key){
-            if( preg_match('/^Kp[a-z]?$/', $key)){
-                $this->kp = $key;
-                return $key;
-            }
-        }
-        return null;
-    }
+    
 }

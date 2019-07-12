@@ -1,6 +1,47 @@
 <?php
 namespace Iaga;
 
+/**
+ * lightens or darkens a color (darkens when percent < 0)
+ * @param string $hex color in hexadecimal where length = 7 (not accepted color like #aaa)
+ * @param float $percent number between 0 and 1
+ * @return string an hexadecimal color
+ */
+function shadeColor($hex, $percent) {
+	$rgb = str_split(trim($hex, '# '), 2);
+	
+	foreach ($rgb as &$hex) {
+		$color = hexdec($hex);
+		$adjustableLimit = $percent < 0 ? $color : 255 - $color;
+		$adjustAmount = ceil($adjustableLimit * $percent);
+		$hex = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
+	}
+	return '#'.implode($rgb);
+}
+
+/**
+ * Convert kp value like 0+, 1- in float value
+ * @param string $kpvalue
+ * @return number
+ */
+function kp2value($kpvalue) {
+	if(gettype($kpvalue) != 'string'){
+		return 0;
+	}
+	$num = floatval( $kpvalue[0]);
+	
+	switch($kpvalue[1]){
+		case "+":
+			$num += 0.333;
+			break;
+		case "-":
+			$num -= 0.333;
+			break;
+	}
+	
+	return $num;
+}
+
 class Config {
     public static $styles = array(
         "aa" =>
