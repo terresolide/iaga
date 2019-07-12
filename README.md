@@ -3,8 +3,11 @@
 [![BCMT](https://www7.obs-mip.fr/wp-content-aeris/uploads/sites/4/2017/12/bcmt-e1562157506384.png)](http://www.bcmt.fr/)
 
 &#x202F;
-# Class Iaga 
-PHP class to read and to handle iaga file (geomagnetic data format)
+# Namespace Iaga 
+
+Contains:
+ * **Class Dataset**: PHP class to read and to handle iaga file (geomagnetic data format)
+ * **Class Chart**: to build chart 
 
 
 ## Install
@@ -32,7 +35,7 @@ composer update
 ### Without composer
 Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/master.zip) and add it to library package.
 
-## An example use 
+## Examples 
 ### Export a iaga file to json (data and metadata)
 @see [tests/export-json.php](https://raw.githubusercontent.com/terresolide/iaga/master/tests/export-json.php) or [tests/export-json-autoload.php](https://raw.githubusercontent.com/terresolide/iaga/master/tests/export-json-autoload.php)
 
