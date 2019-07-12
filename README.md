@@ -33,7 +33,7 @@ composer update
 Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/master.zip) and add it to library package.
 
 ## An example use 
-### Export a iaga file to json file
+### Export a iaga file to json (data and metadata)
 
 
 ```php
