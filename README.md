@@ -9,7 +9,7 @@ PHP class to read and to handle iaga file (geomagnetic data format)
 
 ## Install
 ### With composer
-In your `composer.json`:
+#### In your `composer.json`:
  * Add repository: `https://github.com/terresolide/iaga.git`
  * Add require to: `terresolide/iaga`
 
@@ -25,20 +25,18 @@ In your `composer.json`:
    },
 ```
 
-Then update package  
+#### Then update package  
 ```
 composer update
 ```
 ### Without composer
-
+Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/master.zip) and add it to library package.
 
 ## An example use 
-### without composer autoload
+### Export a iaga file to json file
+
 
 ```php
-  require_once '../src/Dataset.php'
- 
-
   // create iaga Dataset from filepath
   $dataset = new \iaga\Dataset('data/iaga_file.dat');
   
