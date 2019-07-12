@@ -34,7 +34,7 @@ Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/maste
 
 ## An example use 
 ### Export a iaga file to json (data and metadata)
-
+@see [tests/export-json.php](https://raw.githubusercontent.com/terresolide/iaga/master/tests/export-json.php) or [tests/export-json-autoload.php](https://raw.githubusercontent.com/terresolide/iaga/master/tests/export-json-autoload.php)
 
 ```php
   // create iaga Dataset from filepath
