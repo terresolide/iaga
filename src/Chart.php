@@ -6,28 +6,35 @@ include_once 'Dataset.php';
 include_once 'Config.php';
 include_once 'Chart/AaParameters.php';
 
-
 Class Chart extends Dataset{
     /**
-     * Some chart have kp indice whose treatment is different (for example they are displayed in column)
-     * the kp is evaluated in constructor
-     * @var string like 'Kpa' or other, null if have not kp
+     * @var array Highchart options
      */
- //   private $kp = null;
+    private $options = array(
+        'width' => 800,
+        'height' => 300,
+        'defaultSeriesType' => 'areaspline',
+        'plotBorderColor'    => '#666666',
+        'plotBorderWidth'     => 1
+    );
     
     /**
-     * Array of colors according to code
-     * @var Array
-     */
- //   private $colors = array();
-    
-    /**
-     * Array of parameters, ready for Highchart
-     * @param array 
+     * Array of series parameters, ready for Highchart
+     * @var array 
      */
     private $parameters = null;
     
-    public function __construct($iaga) {
+    /**
+     * @var string $title
+     */
+    private $title = '';
+    
+    /**
+     * Constructor
+     * @param \Iaga\Dataset $iaga
+     * @param array $options
+     */
+    public function __construct($iaga, $options = array()) {
         switch(gettype($iaga)) {
             case 'string':
                 parent::__construct($iaga);
@@ -38,9 +45,44 @@ Class Chart extends Dataset{
                 }
                 break;
         }
-       // $this->getKpName();
-      //  $this->initColors();
-       // $this->initSeries();
+        $this->setOptions($options);
+        $this->initParameters();
+    }
+    /**
+     * set graph color
+     * @var string|array color in hexa or array of colors
+     */
+    public function setColor($color) {
+        $this->parameters->setColor($color);
+    }
+    /**
+     * set graph height
+     * @var int $height
+     */
+    public function setHeight($height) {
+        $this->options['height'] = $height;
+    }
+    
+    /**
+     * set chart options
+     * @var array $options
+     */
+    public function setOptions($options) {
+        $this->options = array_merge($this->options, $options);
+    }
+    
+    /**
+     * @param string $title
+     */
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+    /**
+     * set width
+     * @var int $width
+     */
+    public function setWidth($width) {
+        $this->options['width'] = $width;
     }
     
     /**
@@ -51,7 +93,6 @@ Class Chart extends Dataset{
     	if(count($this->series) === 0) {
     		$this->initSeries();
     	}
-    	var_dump($this->series);
         if (!is_null($this->error)) {
             $rep = array("error" => $this->error);
         } else {
@@ -70,9 +111,10 @@ Class Chart extends Dataset{
     
     /**
      * return a html page with the graph
+     * @var string $title
      * @return string HTML
      */
-    public function toHTML($title) {
+    public function toHTML($title = '') {
       //  $error = "Une erreur existe";
         $options = $this->getOptions();
         ob_start();
@@ -81,40 +123,16 @@ Class Chart extends Dataset{
     }
     
     
-    /**
-     * set graph color
-     * @var string color in hexa
-     */
-    public function setColor($color) {
-        $this->colors[0] = $color;
-        $this->colors[1] = shadeColor($color, -0.2);
-        $this->colors[2] = shadeColor($color, 0.3);
-    }
-    /**
-     * Compute the appropriate colors according to indice or station
-     */
-    private function initColors() {
-        $color =  Config::$styles[\strtolower($this->code)]['color'];
-        $this->setColor($color);
-    }
+
+
 
     /**
      * Prepare data and options for Highchart
      * @return array all the options to build highchart chart
      */
     private function getOptions() {
-    	var_dump($this->code);
-    	$parameters = new Chart\AaParameters($this->code, $this->data, $this->fields);
-       // $parameters->initSeries();
-    	var_dump($parameters->getYAxis());
         return array(
-            'chart' => array(
-                'height'             => 300, 
-                'width'             => 800, 
-                'defaultSeriesType' => 'areaspline',
-                'plotBorderColor'    => '#666666',
-                'plotBorderWidth'     => 1
-            ),
+            'chart' => $this->options,
             'title' => array( 
                 'text'         => '',
                 'align'        => 'float'
@@ -135,129 +153,20 @@ Class Chart extends Dataset{
                 ),
                 'crosshair'        => true
             ),
-            'plotOptions' => $parameters->getPlotOptions(),
-            'yAxis'    => $parameters->getYAxis(),
-            'tooltip' => $parameters->getTooltip(),
-            'series'  => $parameters->getSeries()    
+            'plotOptions' => $this->parameters->getPlotOptions(),
+            'yAxis'    => $this->parameters->getYAxis(),
+            'tooltip' => $this->parameters->getTooltip(),
+            'series'  => $this->parameters->getSeries()    
         );
     }
-    
-    /**
-     * prepare the plot Options for highchart according the indice
-     * @return array 
-     */
-    private function getPlotOptions () {
-        $plotOptions = array( 'series' => array(
-            'stacking' => "normal",
-            'pointPadding' =>  0,
-            'groupPadding' =>  0,
-            'borderWidth' =>  1,
-        ));
-        if (in_array($this->code, ['SFE', 'SC'])) {
-            $plotOptions['column'] = array('pointWidth' => 4);
-        }
-        return $plotOptions;
-    }
-    private function getTooltip () {
-        $tooltip = array(
-                'shared' => true,
-                'crosshaires' => [true, false, false]
-        );
-        switch($this->code) {
-        	case 'aa':
-        	case 'am':
-        	case 'Kp':
-        		$tooltip['formatter'] = 'formatterDefault';
-        		break;
-        	case 'Dst':
-        	case 'PC':
-        		break;
-        	case 'SC':
-        	case 'SFE':
-        		break;
-        	case 'CK-days':
-        		break;
-        	case 'Q-days':
-        		break;
-        	case 'asigma':
-        	case 'AE':
-        		break;
-        		// station
-        	default:
-        		break;
-        		
-        }
-        
-        return $tooltip;
-    }
-    private function getYAxis() {
-        $yAxis = array();
-        $infos = Config::$styles[$this->code];
-        // trouble with Kp indice whose denominations principe is different from indices aa and am: 
-        // - the name of geomagnetic index is Kp 
-        // - the linear values are ap
-        
-        
-        switch($this->code) {
-            case 'aa':
-            case 'am':
-            case 'Kp':
-            case 'Dst':
-            	$code = $this->code === 'Kp' ? 'ap' : $this->code;
-                if (!is_null($this->kp)) {
-                    $html = '<span style="color:'. $this->colors[2] .';font-weight:600;">';
-                    $html .= $this->kp .'</span>';
-                    array_push($yAxis, array(
-                        'title' => array(
-                            'useHTML' => true,
-                            'text' => $html
-                        ),
-                    	'tickAmount' => 4,
-                        'max' => 9,
-                        'opposite' => true 
-                    ));
-                }
-                $html = '<span style="color:'. $this->colors[1] .'">';
-                $html .= '<b>'. $code. '</b></span> (' . $infos['unit']. ')';
-                array_unshift($yAxis, array(
-                    'title' => array(
-                        'margin' => 20,
-                        'useHTML' => true,
-                        'text' => $html
-                    ),
-                	'tickAmount' => 4
-                ));
-                break;
-            case 'PC':
-                break;
-            case 'SC':
-            case 'SFE':
-                break;
-            case 'CK-days':
-                break;
-            case 'Q-days':
-                break;
-            case 'asigma':
-            case 'AE':
-                break;
-                // station
-            default:
-                $this->initSeriesStations();
-                break;
-        }
-        return $yAxis;
-    }
-    
-    /**
-     * Compute the array of data, ready for highchart
-     */
-    private function initSeries() {
+
+    private function initParameters() {
         switch ($this->code) {
             case 'aa':
             case 'am':
             case 'Kp':
             case 'Dst':
-                $this->initSeriesDefaultIndice();
+                $this->parameters = $parameters = new Chart\AaParameters($this->code, $this->data, $this->fields);
                 break;
             case 'PC':
                 break;
@@ -271,90 +180,9 @@ Class Chart extends Dataset{
             case 'asigma':
             case 'AE':
                 break;
-            // station
+            // stations
             default:
-                $this->initSeriesStations();
                 break;
-                
         }
-        
     }
-    /**
-     * Create one (or two) temporal series from data array
-     * Used by Kp, aa, am and Dst indices
-     * For the 'kp' indices add column kp
-     */
-    private function initSeriesDefaultIndice () {
-    	 $code = ($this->code === 'Kp') ? 'ap' : $this->code;
-         $data = array(); // line
-         $datakp = array(); // column
-         if (!is_null($this->kp)){
-         	//search the index in each $this->data line of 'kp' (kpa, kpm or kp)
-             $searchkp = array_filter($this->fields, function ($value) {
-                 if (preg_match('/^kp[am]{0,1}/i', $value)) {
-                     return true;
-                 } else {
-                     return false;
-                 }
-             });
-             // the index of kp value in each line of $this->data
-             $indexkp = array_keys($searchkp)[0];
-         }
-         // search the index of indice in each line of $this->data
-         $index = array_search($code, $this->fields, true);
-         var_dump($code);
-         $i = 0;
-         foreach($this->data as $values) {
-             $date = new \DateTime( $values[0]);
-             $microtime =  1000 * $date->format('U');
-             if (!is_null($this->kp)) {
-             	// add 1h30 (why?)
-             	$microtime += 5400000;
-             }
-             // values of aa, am or kp  are in column $index
-             if (!empty($values[$index]) && $values[$index] != '9999' && $values[$index] != '999.00') {
-                 $point = array($microtime, $values[$index]);
-                array_push($data, $point);
-                if (!is_null($this->kp) && isset($values[$indexkp])) {
-                    $point = array($microtime, kp2value($values[$indexkp]));
-                    array_push($datakp, $point);
-                }
-             }
-         }
-         $this->series[0] = $data;
-         $this->series[1] = $datakp;
-    }
-    private function initSeriesStations() {
-        
-    }
-    private function getSeries() {
-        $series = array();
-        switch($this->code) {
-            case 'aa':
-            case 'Kp':
-            case 'am':
-            case 'Dst':
-                if (!is_null($this->kp)) {
-                    array_push($series, array(
-                        'type' => 'column',
-                        'name' => $this->kp,
-                        'color' => $this->colors[2],
-                        'yAxis' => 1,
-                        'zIndex' => 1,
-                        'data' => $this->series[1]
-                    ));
-                }
-            default:
-                array_unshift($series, array(
-                        'type' => 'line',
-                        'name' => $this->code,
-                        'color'=> $this->colors[1],
-                        'zIndex' => 2,
-                        'data'  => $this->series[0]
-                ));
-                
-        }
-        return $series;
-    }
-    
 }
