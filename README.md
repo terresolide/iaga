@@ -38,7 +38,7 @@ Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/maste
 
 ```php
   // create iaga Dataset from filepath
-  $dataset = new \iaga\Dataset('data/iaga_file.dat');
+  $dataset = new \Iaga\Dataset('data/iaga_file.dat');
   
   // add metadata link to download
   $dataset->setMetadata(

@@ -2,7 +2,7 @@
 /**
  * Dataset a class to load and to process iaga file 
  * 
- * @license GNU
+ * @license CeCILL
  * @author epointal
  **/
 namespace Iaga;
