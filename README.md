@@ -32,14 +32,14 @@ In your `composer.json`:
 ### without composer autoload
 
 ```php
-  require_once 'Iaga.php'
-  use \iaga\Iaga as Iaga;
+  require_once '../src/Dataset.php'
+ 
 
-  // create Iaga from filepath
-  $iaga = new Iaga('data/iaga_file.dat');
+  // create iaga Dataset from filepath
+  $dataset = new \iaga\Dataset('data/iaga_file.dat');
   
   // add metadata link to download
-  $iaga->setMetadata(
+  $dataset->setMetadata(
         'download', 
         array(
                 'name' => 'exemple_indice_aa.dat',
@@ -49,7 +49,7 @@ In your `composer.json`:
 
   // output
   header('Content-Type: application/json');
-  echo $iaga->toJson();
+  echo $dataset->toJson();
 ```
 
 
