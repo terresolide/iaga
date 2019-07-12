@@ -25,6 +25,10 @@ In your `composer.json`:
    },
 ```
 
+Then update package  
+```
+composer update
+```
 ### Without composer
 
 

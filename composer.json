@@ -4,7 +4,7 @@
   "description": "Tools to manipulate iaga",
   "type": "library",
   "keywords": ["geomagnetic index", "geomagnetism", "geomagnetic station"],
-  "license": "GNU",
+  "license": "CeCILL",
   "authors": [{
       "name": "Elisabeth Pointal",
       "email": "elisabeth.pointal@gmail.com",
