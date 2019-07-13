@@ -9,7 +9,9 @@ Contains:
  * **Class Dataset**: PHP class to read and to handle iaga file (geomagnetic data format)
  * **Class Chart**: to build chart 
 
-
+## Use
+ * [Highcharts](https://www.highcharts.com/) a javascript library to build interactive charts
+ 
 ## Install
 ### With composer
 #### In your `composer.json`:

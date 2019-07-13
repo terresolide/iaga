@@ -245,9 +245,10 @@ class Dataset {
         }
         if ($fields[0] === 'DATE' && $fields[1] === 'TIME') {
             array_splice($fields, 1, 1 );
-            $fields[0] = 'time';
             $this->isDatetime = true;
         }
+        
+        $fields[0] = 'DATETIME';
         $this->fields = $fields;
     }
     
@@ -265,8 +266,11 @@ class Dataset {
             $date = $data[0].'T'.$data[1].'Z';
             array_splice($data, 1, 1);
             $data[0] = $date;
+        } else {
+            $date = $data[0]. 'T12:00:00.00Z';
         }
         $end = end($data);
+        // remove space and other special char extract by split at the end of array
         while($end === '|' || $end === '') {
             array_pop($data);
             $end = end($data);

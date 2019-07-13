@@ -31,8 +31,8 @@
        	             var s =  Highcharts.dateFormat('%e %b %Y %H:%M', this.x) ;
        				 console.log(s);
        	             this.points.forEach(function(point, i) {
-       	            	 if( point.series.name != "hidden")
-       	                 s += '<br/><span style="color:'+ point.series.color +'">\u25AC</span> '+ point.series.name +': ' ;
+       	            	 if( point.series.name != 'hidden')
+       	                 s += '<br/><span style="color:'+ point.series.color +';">\u25AC</span> '+ point.series.name +': ' ;
 						 console.log(point.series.type);
         	                 if (point.series.type =='column') {
        	                	 //Kp values

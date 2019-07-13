@@ -2,8 +2,8 @@
 require_once '../src/Chart.php';
 
 
- $chart = new Iaga\Chart('data/am_2019-07-03_2019-07-08_P.dat', array('width' => 600));
+ $chart = new Iaga\Chart('data/Kp_2019-07-05_2019-07-12_Q.dat', array('width' => 800));
 
-
+$chart->addTemporalExtend('2019-07-01', '2019-07-12T12:00:00Z');
  echo $chart->toHTML();
 

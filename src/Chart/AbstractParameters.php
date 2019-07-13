@@ -5,19 +5,38 @@
 namespace Iaga\Chart;
 
 // case don't use vendor autoloader
-include_once realpath(__DIR__.'/../Config.php');
+include_once realpath(__DIR__ . '/../Config.php');
 
 abstract class AbstractParameters{
     protected $code;
-    protected $color;
-    protected $series;
+    protected $colors;
+    
+    /**
+     * @var array $data reorganize for Highchart array of serie [microtime, value]
+     */
+    protected $data;
 
-    public function __construct($code, $data, $fields) {
+    /**
+     * @var array $hidden serie of 2 dates to extend graph from a datemin to a datemax
+     */
+    protected $hidden = array();
+    
+    protected $extend = null;
+    /**
+     * @param string $code iaga code of indice or station
+     * @param array $data the data from iaga file as if
+     * @param array $fields list of fields in iaga file
+     */
+    public function __construct($code, $data, $fields, $extend, $temporalExtend) {
+        date_default_timezone_set('UTC');
         $this->code = $code;
         $this->fields = $fields;
+        $this->extend = $extend;
+        $this->initHidden($temporalExtend);
         $this->initColors(\Iaga\Config::$styles[strtolower($this->code)]);
-        $this->initSeries($fields, $data);
+        $this->initData($fields, $data);
     }
+    
 
     abstract public function getSeries();
     abstract public function getTooltip();
@@ -42,8 +61,8 @@ abstract class AbstractParameters{
     
     public function setColor($color) {
         $this->colors[0] = $color;
-        $this->colors[1] = \Iaga\shadeColor($color, -0.2);
-        $this->colors[2] = \Iaga\shadeColor($color, 0.3);
+        $this->colors[1] = \Iaga\shadeColor($color, 0.5);
+        $this->colors[2] = \Iaga\shadeColor($color, -0.2);
     }
     
     protected function initColors() {
@@ -56,7 +75,24 @@ abstract class AbstractParameters{
      * @var array $data the file data as it was stored
      * Compute the array of data, ready for highchart
      */
-    abstract protected function initSeries($fields, $data);
+    abstract protected function initData($fields, $data);
+    
+    /**
+     * Add a data of hidden data, the goal is to have chart from a datemin to a datemax
+     * even if the real data is not in this bounds
+     */
+    protected function initHidden ($temporalExtend) {
+        if ( !is_null($temporalExtend['min']))  {
+            $date0 = new \DateTime($temporalExtend['min']);
+            $microtime =  1000 * $date0->format('U');
+            array_push($this->hidden, array($microtime, 1));
+        }
+        if (!is_null($temporalExtend['max'])) {
+            $date1 = new \DateTime( $temporalExtend['max']);
+            $microtime =  1000 * $date1->format('U');
+            array_push($this->hidden, array($microtime, 1));
+        }
+    }
 
 
 }

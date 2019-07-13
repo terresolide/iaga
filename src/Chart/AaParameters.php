@@ -1,6 +1,7 @@
 <?php
 namespace Iaga\Chart;
 
+// in case there is no vendor autoloader
 require_once 'AbstractParameters.php';
 
 /**
@@ -13,9 +14,9 @@ class AaParameters extends AbstractParameters{
     
     private $kp = null;
     
-    public function __construct($code, $data, $fields) {
+    public function __construct($code, $data, $fields, $extend, $temporalExtend) {
         $this->getKpName($fields);
-        parent::__construct($code, $data, $fields);
+        parent::__construct($code, $data, $fields, $extend, $temporalExtend);
     }
 
     public function getTooltip() {
@@ -33,20 +34,27 @@ class AaParameters extends AbstractParameters{
             array_push($series, array(
                 'type' => 'column',
                 'name' => $this->kp,
-                'color' => $this->colors[2],
+                'color' => $this->colors[1],
                 'yAxis' => 1,
                 'zIndex' => 1,
-                'data' => $this->series[1]
+                'data' => $this->data[1]
             ));
         }
     
         array_unshift($series, array(
             'type' => 'line',
             'name' => $name,
-            'color'=> $this->colors[1],
+            'color'=> $this->colors[0],
             'zIndex' => 2,
-            'data'  => $this->series[0]
+            'data'  => $this->data[0]
         ));
+        if (count($this->hidden)) {
+            array_push($series, array(
+                'name' => 'hidden',
+                'color' => 'rgba(255, 255, 255, 0.1)',
+                'data' => $this->hidden
+            ));
+        }
         return $series;
     }
     public function getYAxis() {
@@ -54,7 +62,7 @@ class AaParameters extends AbstractParameters{
         $infos = \Iaga\Config::$styles[strtolower($this->code)];
         $code = $this->code === 'Kp' ? 'ap' : $this->code;
         if (!is_null($this->kp)) {
-            $html = '<span style="color:'. $this->colors[2] .';font-weight:600;">';
+            $html = '<span style="color:'. $this->colors[1] .';font-weight:600;">';
             $html .= $this->kp .'</span>';
             array_push($yAxis, array(
                     'title' => array(
@@ -66,7 +74,7 @@ class AaParameters extends AbstractParameters{
                     'opposite' => true
             ));
         }
-        $html = '<span style="color:'. $this->colors[1] .'">';
+        $html = '<span style="color:'. $this->colors[0] .'">';
         $html .= '<b>'. $code. '</b></span> (' . $infos['unit']. ')';
         array_unshift($yAxis, array(
                 'title' => array(
@@ -74,11 +82,14 @@ class AaParameters extends AbstractParameters{
                         'useHTML' => true,
                         'text' => $html
                 ),
-                'tickAmount' => 4
+                'gridLineColor' => '#efefef'
         ));
         return $yAxis;
     }
-    protected function initSeries($fields, $dataSrc) {
+    public function setSimple () {
+        
+    }
+    protected function initData($fields, $dataSrc) {
         // Create one (or two) temporal series from data array
         // Used by Kp, aa, am and Dst indices
         // For the 'kp' indices add column kp
@@ -99,27 +110,25 @@ class AaParameters extends AbstractParameters{
         }
         // search the index of indice in each line of $this->data
         $index = array_search($code, $this->fields, true);
-        
-        $i = 0;
-        foreach($dataSrc as $values) {
-            $date = new \DateTime( $values[0]);
+        for($i = $this->extend['min']; $i <= $this->extend['max']; $i++) {
+            $date = new \DateTime( $dataSrc[$i][0]);
             $microtime =  1000 * $date->format('U');
             if (!is_null($this->kp)) {
                 // add 1h30 (why?)
                 $microtime += 5400000;
             }
             // values of aa, am or kp  are in column $index
-            if (!empty($values[$index]) && $values[$index] != '9999' && $values[$index] != '999.00') {
-                $point = array($microtime, $values[$index]);
+            if (!empty($dataSrc[$i][$index]) && $dataSrc[$i][$index] != '9999' && $dataSrc[$i][$index] != '999.00') {
+                $point = array($microtime, $dataSrc[$i][$index]);
                 array_push($data, $point);
-                if (!is_null($this->kp) && isset($values[$indexkp])) {
-                    $point = array($microtime, \Iaga\kp2value($values[$indexkp]));
+                if (!is_null($this->kp) && isset($dataSrc[$i][$indexkp])) {
+                    $point = array($microtime, \Iaga\kp2value($dataSrc[$i][$indexkp]));
                     array_push($datakp, $point);
                 }
             }
         }
-        $this->series[0] = $data;
-        $this->series[1] = $datakp;
+        $this->data[0] = $data;
+        $this->data[1] = $datakp;
     }
     private function getKpName($fields) {
         foreach($fields as $key){
