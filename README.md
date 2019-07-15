@@ -62,4 +62,5 @@ Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/maste
   echo $dataset->toJson();
 ```
 
-
+## Documentation
+See more information in the [wiki](https://github.com/terresolide/iaga/wiki)
