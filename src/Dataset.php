@@ -108,10 +108,10 @@ class Dataset {
 
     /**
      * Concat data from another file
-     * @param Iaga $iaga 
+     * @param \Iaga\Dataset $dataset 
      * @param boolean $force merge data even if they have different processingLevel
      */
-    public function concat($iaga, $force=false) {
+    public function concat($dataset, $force=false) {
         // check if it's the same code
         
         // check if dates are contiguous
@@ -180,11 +180,15 @@ class Dataset {
     }
     
     /**
-     * return a xml string
-     * @return string
+     * Create a xml from data and metadata
+     * @return DOMDocument 
      */
     public function toXml() {
         // @todo
+    	$xml = new \DOMDocument('1.0', 'UTF-8');
+    	$msg = $xml->createElement('error', 'Not yet implemented');
+    	$xml->appendChild($msg);
+        return $xml;
     }
     
     private function computeExtend() {
@@ -203,6 +207,10 @@ class Dataset {
                 $max--;
             }
         }
+        var_dump($max);
+        var_dump($this->data[$max][0]);
+        $this->metadata->temporalExtent->begin = $this->data[$min][0];
+        $this->metadata->temporalExtent->end = $this->data[$max][0];
         $this->extend = array( 'min' => $min, 'max' => $max);
     }
     
