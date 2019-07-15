@@ -16,6 +16,7 @@ class AaParameters extends AbstractParameters{
     
     public function __construct($code, $data, $fields, $extent, $temporalExtent) {
         $this->getKpName($fields);
+        $this->initColors(\Iaga\Config::$styles[strtolower($this->code)]);
         parent::__construct($code, $data, $fields, $extent, $temporalExtent);
     }
 
@@ -89,6 +90,7 @@ class AaParameters extends AbstractParameters{
     public function setSimple () {
         
     }
+    
     protected function initData($fields, $dataSrc) {
         // Create one (or two) temporal series from data array
         // Used by Kp, aa, am and Dst indices

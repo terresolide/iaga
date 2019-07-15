@@ -33,7 +33,6 @@ abstract class AbstractParameters{
         $this->fields = $fields;
         $this->extent = $extent;
         $this->initHidden($temporalExtent);
-        $this->initColors(\Iaga\Config::$styles[strtolower($this->code)]);
         $this->initData($fields, $data);
     }
     
@@ -93,6 +92,4 @@ abstract class AbstractParameters{
             array_push($this->hidden, array($microtime, 1));
         }
     }
-
-
 }

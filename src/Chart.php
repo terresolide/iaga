@@ -53,13 +53,13 @@ Class Chart extends Dataset{
      * @param string $datemax
      */
     public function addTemporalExtent($datemin, $datemax = null) {
-    parent::addTemporalExtent($datemin, $datemax);
-    $this->parameters = null;
+        parent::addTemporalExtent($datemin, $datemax);
+        $this->parameters = null;
     }
     
     public function removeTemporalExtent() {
-    parent::removeTemporalExtent();
-    $this->parameters = null;
+       parent::removeTemporalExtent();
+       $this->parameters = null;
     }
     
     /**
@@ -104,14 +104,7 @@ Class Chart extends Dataset{
      * @return array
      */
     public function toChartArray() {
-    if(count($this->series) === 0) {
-    $this->initSeries();
-    }
-        if (!is_null($this->error)) {
-            $rep = array("error" => $this->error);
-        } else {
-        }
-        return $rep;
+       return $this->getOptions();
     }
     
     /**
@@ -196,13 +189,33 @@ Class Chart extends Dataset{
                 );
                 break;
             case 'PC':
+            case 'PCN':
+            case 'PCS':
+ 
                 break;
             case 'SC':
             case 'SFE':
                 break;
             case 'CK-days':
+                include_once 'Chart/CKdaysParameters.php';
+                $this->parameters = new Chart\CKdaysParameters(
+                    $this->code,
+                    $this->data,
+                    $this->fields,
+                    $this->extent,
+                    $this->temporalExtent
+                );
                 break;
-            case 'Q-days':
+            case 'Q-Days':
+                var_dump('init parameters');
+                include_once 'Chart/QdaysParameters.php';
+                $this->parameters = new Chart\QdaysParameters(
+                    $this->code,
+                    $this->data,
+                    $this->fields,
+                    $this->extent,
+                    $this->temporalExtent
+                );
                 break;
             case 'asigma':
             case 'AE':

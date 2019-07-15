@@ -68,7 +68,6 @@ class Dataset {
      */
     public function __construct($filepath) {
         $this->load($filepath);
-        $this->computeExtend();
     }
     /**
      * @param string $datemin
@@ -155,8 +154,8 @@ class Dataset {
      * Remove the temporal limits or extend
      */
     public function removeTemporalExtent() {
-    	$this->temporalExtent = array('min' => null, 'max'=> null);
-    	$this->extent = array('min' => 0, 'max' => count($this->data) - 1);
+        $this->temporalExtent = array('min' => null, 'max'=> null);
+        $this->extent = array('min' => 0, 'max' => count($this->data) - 1);
     }
     
     /**
@@ -189,9 +188,9 @@ class Dataset {
      */
     public function toXml() {
         // @todo
-    	$xml = new \DOMDocument('1.0', 'UTF-8');
-    	$msg = $xml->createElement('error', 'Not yet implemented');
-    	$xml->appendChild($msg);
+        $xml = new \DOMDocument('1.0', 'UTF-8');
+        $msg = $xml->createElement('error', 'Not yet implemented');
+        $xml->appendChild($msg);
         return $xml;
     }
     
@@ -204,7 +203,7 @@ class Dataset {
             while($this->data[$min][0] < $this->temporalExtent['min'] && $min < $max) {
                 $min ++;
             }
-        }
+        } 
         if (!is_null($this->temporalExtent['max'])) {
             // Search the last index of data where the date is minor than temporalExtent['max']
             while($this->data[$max][0] > $this->temporalExtent['max'] && $min < $max) {
@@ -222,8 +221,13 @@ class Dataset {
      */
     private function load ($filepath) {
         $flx = fopen( $filepath, "r");
-        $this->read($flx, $filepath);
-        fclose($flx);
+        if ($flx === false) {
+            $this->error = 'CAN NOT OPEN THE FILE ' . $url;
+            return;
+        } else {
+            $this->read($flx, $filepath);
+            fclose($flx);
+        }
     }
     
     /**
@@ -234,10 +238,6 @@ class Dataset {
      */
     private function read($resource, $url) {
 
-        if ($resource === false) {
-            $this->error = 'CAN NOT OPEN THE FILE ' . $url;
-            return;
-        }
         $this->initMetadata($url);
         
         //read line by line the resource
@@ -258,8 +258,7 @@ class Dataset {
         }
         // order data by date (usefull???)
         // array_multisort($this->listDates, SORT_ASC, SORT_STRING, $this->data);
-       // $this->metadata->temporalExtent['begin'] = $this->listDates[0];
-       // $this->metadata->temporalExtent->end = end($this->listDates);
+        $this->computeExtend();
     }
     
     /**

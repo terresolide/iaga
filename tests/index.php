@@ -2,9 +2,10 @@
 require_once '../src/Chart.php';
 
 
- $chart = new Iaga\Chart('data/Kp_2019-07-05_2019-07-12_Q.dat', array('width' => 800));
+// $chart = new Iaga\Chart('data/exemple_indice_Qdays_2016-01_D.dat', array('width' => 800));
 
-$chart->addTemporalExtent('2019-07-01', '2019-07-12T12:00:00Z');
-echo $chart->toXml()->saveXml();
+$chart = new Iaga\Chart('data/exemple_indice_CKdays_2000_D.dat', array('width' => 800));
+
+
  echo $chart->toHTML();
 

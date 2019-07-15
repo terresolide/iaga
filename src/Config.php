@@ -85,13 +85,13 @@ class Config {
               "color"  => "#cc3366", 
               "url"    => "http =>//isgi.unistra.fr/indices_ae.php"
          ),
-        "ck-days" => array(
+        "CK-days" => array(
               "name"   => "CK-days", 
               "unit"   => "", 
               "color"  => "#32CD32", 
               "url"    => "http =>//isgi.unistra.fr/events_ckdays.php"
          ),
-        "q-days" => array(
+        "Q-Days" => array(
               "name"   => "Q-days", 
               "unit"   => "", 
               "color"  => "#ff0000", 
