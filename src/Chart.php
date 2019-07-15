@@ -53,13 +53,13 @@ Class Chart extends Dataset{
      * @param string $datemin
      * @param string $datemax
      */
-    public function addTemporalExtend($datemin, $datemax = null) {
-    parent::addTemporalExtend($datemin, $datemax);
+    public function addTemporalExtent($datemin, $datemax = null) {
+    parent::addTemporalExtent($datemin, $datemax);
     $this->parameters = null;
     }
     
-    public function removeTemporalExtend() {
-    parent::removeTemporalExtend();
+    public function removeTemporalExtent() {
+    parent::removeTemporalExtent();
     $this->parameters = null;
     }
     
@@ -192,8 +192,8 @@ Class Chart extends Dataset{
                     $this->code,
                     $this->data,
                     $this->fields,
-                    $this->extend,
-                    $this->temporalExtend
+                    $this->extent,
+                    $this->temporalExtent
                 );
                 break;
             case 'PC':

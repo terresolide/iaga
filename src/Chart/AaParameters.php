@@ -14,9 +14,9 @@ class AaParameters extends AbstractParameters{
     
     private $kp = null;
     
-    public function __construct($code, $data, $fields, $extend, $temporalExtend) {
+    public function __construct($code, $data, $fields, $extent, $temporalExtent) {
         $this->getKpName($fields);
-        parent::__construct($code, $data, $fields, $extend, $temporalExtend);
+        parent::__construct($code, $data, $fields, $extent, $temporalExtent);
     }
 
     public function getTooltip() {
@@ -110,7 +110,7 @@ class AaParameters extends AbstractParameters{
         }
         // search the index of indice in each line of $this->data
         $index = array_search($code, $this->fields, true);
-        for($i = $this->extend['min']; $i <= $this->extend['max']; $i++) {
+        for($i = $this->extent['min']; $i <= $this->extent['max']; $i++) {
             $date = new \DateTime( $dataSrc[$i][0]);
             $microtime =  1000 * $date->format('U');
             if (!is_null($this->kp)) {

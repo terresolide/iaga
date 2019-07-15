@@ -39,17 +39,18 @@ class Dataset {
     protected $fields = array();
     
     /**
-     * mostly used when data are limited by a temporal extend
+     * mostly used when data are limited by a temporal extent
      * by default min = 0 and max is last index of array data
      * @var array of indexmin and indexmax of used data
      */
-    protected $extend = array('min' =>null, 'max' =>null);
+    protected $extent = array('min' =>null, 'max' =>null);
     
     /**
-     * datemin and datemax to limit the data displayed or extend the chart
-     * @var array $temporalExtend
+     * datemin and datemax to limit the data displayed
+     *  and to limit or to extend the temporal bounds of the chart
+     * @var array $temporalExtent
      */
-    protected $temporalExtend = array('min' =>null, 'max' =>null);
+    protected $temporalExtent = array('min' =>null, 'max' =>null);
     
     /**
      * @var String
@@ -73,7 +74,7 @@ class Dataset {
      * @param string $datemin
      * @param string $datemax
      */
-    public function addTemporalExtend($datemin, $datemax = null) {
+    public function addTemporalExtent($datemin, $datemax = null) {
         if (strlen($datemin)<6) {
             $date0 = null;
         }else if (strlen($datemin) <11 ) {
@@ -97,13 +98,8 @@ class Dataset {
             $date1 = $datemax;
         }
         
-        $this->temporalExtend = array('min' => $date0, 'max' => $date1);
+        $this->temporalExtent = array('min' => $date0, 'max' => $date1);
         $this->computeExtend($date0, $date1);
-    }
-    
-    public function removeTemporalExtend() {
-        $this->temporalExtend = array('min' => null, 'max'=> null);
-        $this->extend = array('min' => 0, 'max' => count($this->data) - 1);
     }
 
     /**
@@ -156,6 +152,14 @@ class Dataset {
     }
     
     /**
+     * Remove the temporal limits or extend
+     */
+    public function removeTemporalExtent() {
+    	$this->temporalExtent = array('min' => null, 'max'=> null);
+    	$this->extent = array('min' => 0, 'max' => count($this->data) - 1);
+    }
+    
+    /**
      * return a json string from Iaga
      * @return string
      */
@@ -171,8 +175,8 @@ class Dataset {
                     "metadata" => $this->metadata,
                     "data"     => array_slice(
                             $data, 
-                            $this->extend['min'], 
-                            $this->extend['max'] - $this->extend['min'] + 1
+                            $this->extent['min'], 
+                            $this->extent['max'] - $this->extent['min'] + 1
                     )
             );
         }
@@ -195,23 +199,21 @@ class Dataset {
         $min = 0;
         $max = count($this->data) - 1;
         
-        if (!is_null($this->temporalExtend['min'])) {
-            // Search the first index of data where the date is upper than temporalExtend['min']
-            while($this->data[$min][0] < $this->temporalExtend['min'] && $min < $max) {
+        if (!is_null($this->temporalExtent['min'])) {
+            // Search the first index of data where the date is upper than temporalExtent['min']
+            while($this->data[$min][0] < $this->temporalExtent['min'] && $min < $max) {
                 $min ++;
             }
         }
-        if (!is_null($this->temporalExtend['max'])) {
-            // Search the last index of data where the date is minor than temporalExtend['max']
-            while($this->data[$max][0] > $this->temporalExtend['max'] && $min < $max) {
+        if (!is_null($this->temporalExtent['max'])) {
+            // Search the last index of data where the date is minor than temporalExtent['max']
+            while($this->data[$max][0] > $this->temporalExtent['max'] && $min < $max) {
                 $max--;
             }
         }
-        var_dump($max);
-        var_dump($this->data[$max][0]);
         $this->metadata->temporalExtent->begin = $this->data[$min][0];
         $this->metadata->temporalExtent->end = $this->data[$max][0];
-        $this->extend = array( 'min' => $min, 'max' => $max);
+        $this->extent = array( 'min' => $min, 'max' => $max);
     }
     
     /**

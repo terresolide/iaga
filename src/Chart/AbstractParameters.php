@@ -17,22 +17,22 @@ abstract class AbstractParameters{
     protected $data;
 
     /**
-     * @var array $hidden serie of 2 dates to extend graph from a datemin to a datemax
+     * @var array $hidden serie of 2 dates to extent graph from a datemin to a datemax
      */
     protected $hidden = array();
     
-    protected $extend = null;
+    protected $extent = null;
     /**
      * @param string $code iaga code of indice or station
      * @param array $data the data from iaga file as if
      * @param array $fields list of fields in iaga file
      */
-    public function __construct($code, $data, $fields, $extend, $temporalExtend) {
+    public function __construct($code, $data, $fields, $extent, $temporalExtent) {
         date_default_timezone_set('UTC');
         $this->code = $code;
         $this->fields = $fields;
-        $this->extend = $extend;
-        $this->initHidden($temporalExtend);
+        $this->extent = $extent;
+        $this->initHidden($temporalExtent);
         $this->initColors(\Iaga\Config::$styles[strtolower($this->code)]);
         $this->initData($fields, $data);
     }
@@ -81,14 +81,14 @@ abstract class AbstractParameters{
      * Add a data of hidden data, the goal is to have chart from a datemin to a datemax
      * even if the real data is not in this bounds
      */
-    protected function initHidden ($temporalExtend) {
-        if ( !is_null($temporalExtend['min']))  {
-            $date0 = new \DateTime($temporalExtend['min']);
+    protected function initHidden ($temporalExtent) {
+        if ( !is_null($temporalExtent['min']))  {
+            $date0 = new \DateTime($temporalExtent['min']);
             $microtime =  1000 * $date0->format('U');
             array_push($this->hidden, array($microtime, 1));
         }
-        if (!is_null($temporalExtend['max'])) {
-            $date1 = new \DateTime( $temporalExtend['max']);
+        if (!is_null($temporalExtent['max'])) {
+            $date1 = new \DateTime( $temporalExtent['max']);
             $microtime =  1000 * $date1->format('U');
             array_push($this->hidden, array($microtime, 1));
         }
