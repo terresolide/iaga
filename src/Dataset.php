@@ -39,6 +39,19 @@ class Dataset {
     protected $fields = array();
     
     /**
+     * mostly used when data are limited by a temporal extend
+     * by default min = 0 and max is last index of array data
+     * @var array of indexmin and indexmax of used data
+     */
+    protected $extend = array('min' =>null, 'max' =>null);
+    
+    /**
+     * datemin and datemax to limit the data displayed or extend the chart
+     * @var array $temporalExtend
+     */
+    protected $temporalExtend = array('min' =>null, 'max' =>null);
+    
+    /**
      * @var String
      */
     protected $error = null;
@@ -54,8 +67,44 @@ class Dataset {
      */
     public function __construct($filepath) {
         $this->load($filepath);
+        $this->computeExtend();
+    }
+    /**
+     * @param string $datemin
+     * @param string $datemax
+     */
+    public function addTemporalExtend($datemin, $datemax = null) {
+        if (strlen($datemin)<6) {
+            $date0 = null;
+        }else if (strlen($datemin) <11 ) {
+            // case date without time
+            $date0 = $datemin .'T00:00:00.000Z';
+        } else if (strlen($datemin) < 20) {
+            // case without microtime
+            $date0 = substr($datemin, 0, 19) . '.000Z';
+        } else {
+            $date0 = datemin;
+        }
+        if (strlen($datemax) < 6 ) {
+            $date1 = null;
+        }else if (strlen($datemax) <12) {
+            // case date without time
+            $date1 = substr($datemax, 0, 10) .'T23:59:59.000Z';
+        } else if (strlen($datemax) < 21) {
+            // case without microtime
+            $date1 = substr($datemax, 0, 19) . '.000Z';
+        } else {
+            $date1 = $datemax;
+        }
+        
+        $this->temporalExtend = array('min' => $date0, 'max' => $date1);
+        $this->computeExtend($date0, $date1);
     }
     
+    public function removeTemporalExtend() {
+        $this->temporalExtend = array('min' => null, 'max'=> null);
+        $this->extend = array('min' => 0, 'max' => count($this->data) - 1);
+    }
 
     /**
      * Concat data from another file
@@ -120,7 +169,11 @@ class Dataset {
             }
             $rep = array(
                     "metadata" => $this->metadata,
-                    "data"     => $data
+                    "data"     => array_slice(
+                            $data, 
+                            $this->extend['min'], 
+                            $this->extend['max'] - $this->extend['min'] + 1
+                    )
             );
         }
         return json_encode($rep, JSON_NUMERIC_CHECK);
@@ -132,6 +185,25 @@ class Dataset {
      */
     public function toXml() {
         // @todo
+    }
+    
+    private function computeExtend() {
+        $min = 0;
+        $max = count($this->data) - 1;
+        
+        if (!is_null($this->temporalExtend['min'])) {
+            // Search the first index of data where the date is upper than temporalExtend['min']
+            while($this->data[$min][0] < $this->temporalExtend['min'] && $min < $max) {
+                $min ++;
+            }
+        }
+        if (!is_null($this->temporalExtend['max'])) {
+            // Search the last index of data where the date is minor than temporalExtend['max']
+            while($this->data[$max][0] > $this->temporalExtend['max'] && $min < $max) {
+                $max--;
+            }
+        }
+        $this->extend = array( 'min' => $min, 'max' => $max);
     }
     
     /**
