@@ -211,8 +211,8 @@ class Dataset {
                 $max--;
             }
         }
-        $this->metadata->temporalExtent->begin = $this->data[$min][0];
-        $this->metadata->temporalExtent->end = $this->data[$max][0];
+        $this->metadata->temporalExtent['begin'] = $this->data[$min][0];
+        $this->metadata->temporalExtent['end']= $this->data[$max][0];
         $this->extent = array( 'min' => $min, 'max' => $max);
     }
     
@@ -258,8 +258,8 @@ class Dataset {
         }
         // order data by date (usefull???)
         // array_multisort($this->listDates, SORT_ASC, SORT_STRING, $this->data);
-        $this->metadata->temporalExtent->begin = $this->listDates[0];
-        $this->metadata->temporalExtent->end = end($this->listDates);
+       // $this->metadata->temporalExtent['begin'] = $this->listDates[0];
+       // $this->metadata->temporalExtent->end = end($this->listDates);
     }
     
     /**
@@ -272,10 +272,9 @@ class Dataset {
         $this->filename = $matches[0];
         
         $this->metadata = new \stdClass();
-        $this->metadata = new \stdClass();
         // initialize description to empty
         $this->metadata->description = '';
-        $this->metadata->temporalExtent = new \stdClass();
+        $this->metadata->temporalExtent = array();
         $this->metadata->title = $this->filename;
     }
     

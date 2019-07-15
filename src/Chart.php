@@ -7,7 +7,6 @@ include_once 'Dataset.php';
 
 Class Chart extends Dataset{
    
-    
     /**
      * @var array Highchart chart options
      */
