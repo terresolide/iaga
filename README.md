@@ -48,15 +48,6 @@ Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/maste
   // create iaga Dataset from filepath
   $dataset = new \Iaga\Dataset('data/iaga_file.dat');
   
-  // add metadata link to download
-  $dataset->setMetadata(
-        'download', 
-        array(
-                'name' => 'exemple_indice_aa.dat',
-                'link' => 'https://url_to_download'
-                )
-        );
-
   // output
   header('Content-Type: application/json');
   echo $dataset->toJson();
