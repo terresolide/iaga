@@ -1,36 +1,39 @@
 {
-	"name" : "terresolide/iaga",
-	"version" : "0.3.0",
-	"description" : "Tools to manipulate iaga",
-	"type" : "library",
-	"keywords" : [
-		"geomagnetic index",
-		"geomagnetism",
-		"geomagnetic station"
-	],
-	"license" : "CeCILL",
-	"authors" : [{
-			"name" : "Elisabeth Pointal",
-			"email" : "elisabeth.pointal@gmail.com",
-			"homepage" : "http://elisabeth.pointal.org",
-			"role" : "Developer"
-		}
-	],
-	"require" : {
-		"php" : ">=5.6.0"
-	},
-	"require-dev" : {
-		"php" : ">=5.6.0"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"Iaga\\" : "src/"
-		}
-	},
-	"autoload-dev" : {
-		"psr-4" : {
-			"Iaga\\" : "src/"
-		}
-	},
-	"minimum-stability" : "beta"
+    "name" : "terresolide/iaga",
+    "version" : "0.3.0",
+    "description" : "Tools to manipulate iaga",
+    "type" : "library",
+    "keywords" : [
+        "geomagnetic index",
+        "geomagnetism",
+        "geomagnetic station"
+    ],
+    "license" : "CECILL-2.1",
+    "authors" : [{
+        "name" : "Elisabeth Pointal",
+        "email" : "elisabeth.pointal@gmail.com",
+        "homepage" : "http://elisabeth.pointal.org",
+        "role" : "Developer"
+    },{
+        "name" : "Aude Chambodut"
+    },{
+        "name" : "Virginie Maury"
+    }],
+    "require" : {
+        "php" : ">=5.6.0"
+    },
+    "require-dev" : {
+        "php" : ">=5.6.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Iaga\\" : "src/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Iaga\\" : "src/"
+        }
+    },
+    "minimum-stability" : "beta"
 }
