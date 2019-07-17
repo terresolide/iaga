@@ -38,7 +38,7 @@ Contains:
 composer update
 ```
 ### Without composer
-Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/master.zip) and add it to library package.
+Download the source [iaga.zip](https://github.com/terresolide/iaga/archive/master.zip) and unzip and add it to library.
 
 ## Examples 
 ### Export a iaga file to json (data and metadata)
