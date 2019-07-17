@@ -10,7 +10,7 @@ Contains:
  * **Class Chart**: to build chart 
 
 ## Use
- * [Highcharts](https://www.highcharts.com/) a javascript library to build interactive charts
+ * [Highcharts](https://www.highcharts.com/) a javascript library to create interactive charts
  
 ## Require
  * PHP >= 5.6 
