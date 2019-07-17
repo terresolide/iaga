@@ -19,6 +19,7 @@
     },{
         "name" : "Virginie Maury"
     }],
+    "readme" : "README.md",
     "require" : {
         "php" : ">=5.6.0"
     },
@@ -35,5 +36,9 @@
             "Iaga\\" : "src/"
         }
     },
-    "minimum-stability" : "beta"
+    "minimum-stability" : "beta",
+    "support" : {
+        "issues": "https://github.com/terresolide/iaga/issues",
+        "wiki": "https://github.com/terresolide/iaga/wiki"
+    }
 }

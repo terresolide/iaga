@@ -107,6 +107,7 @@ class Dataset {
      * @param boolean $force merge data even if they have different processingLevel
      */
     public function concat($dataset, $force=false) {
+        // @todo
         // check if it's the same code
         
         // check if dates are contiguous
@@ -115,6 +116,13 @@ class Dataset {
         
         // merge in order the data 
         
+    }
+    
+    /**
+     * Combine the data of this file with data from another file or Iaga\Dataset
+     */
+    public function combine($dataset) {
+        // @todo
     }
     
     /**
@@ -159,6 +167,17 @@ class Dataset {
     }
     
     /**
+     * @return a DOMDocument describing metadata and data
+     */
+    public function toDOMDocument() {
+        // @todo
+        $xml = new \DOMDocument('1.0', 'UTF-8');
+        $msg = $xml->createElement('error', 'Not yet implemented');
+        $xml->appendChild($msg);
+        return $xml;
+    }
+    
+    /**
      * return a json string from Iaga
      * @return string
      */
@@ -188,10 +207,8 @@ class Dataset {
      */
     public function toXml() {
         // @todo
-        $xml = new \DOMDocument('1.0', 'UTF-8');
-        $msg = $xml->createElement('error', 'Not yet implemented');
-        $xml->appendChild($msg);
-        return $xml;
+        $xml = $this->toDOMDocument();
+        return $xml->saveXML();
     }
     
     private function computeExtend() {
